@@ -79,7 +79,7 @@ fotr_df =
   read_excel(
     "data/LoTR_Words.xlsx", 
     range = "B3:D6"
-  )
+    )
 
 fotr_df
 ```
@@ -89,7 +89,7 @@ tt_df =
   read_excel(
     "data/LoTR_Words.xlsx", 
     range = "F3:H6"
-  )
+    )
 
 tt_df
 ```
@@ -105,3 +105,13 @@ pulse_df =
 pulse_df = janitor::clean_names(pulse_df)
 ```
 
+## What sucks about read.csv()
+
+Import pups with 'read.csv()'
+
+```{r}
+pups_df_base =
+  read.csv("data/FAS_pups.csv")
+
+pups_df_base
+```
