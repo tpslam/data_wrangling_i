@@ -20,6 +20,7 @@ library(tidyverse)
 
 ``` r
 library(readxl)
+library(haven)
 ```
 
 Import our first dataset.
@@ -190,7 +191,7 @@ Data summary
 | pd_pivot      |        13 |          0.96 |  7.09 | 1.51 |   4 |   6 |   7 |   8 |   12 | ▂▇▂▂▁ |
 | pd_walk       |         0 |          1.00 |  9.50 | 1.34 |   7 |   9 |   9 |  10 |   14 | ▆▇▇▂▁ |
 
-## Excel
+## Import Excel
 
 Load MLB data
 
@@ -256,3 +257,14 @@ tt_df
     ## 1 Elf       331   513
     ## 2 Hobbit      0  2463
     ## 3 Man       401  3589
+
+## Import SAS
+
+Read PULSE dataset
+
+``` r
+pulse_df =
+  read_sas("data/public_pulse_data.sas7bdat")
+
+pulse_df = janitor::clean_names(pulse_df)
+```
