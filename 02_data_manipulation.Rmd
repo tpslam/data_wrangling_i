@@ -161,3 +161,21 @@ pups_df =
   mutate(pd_walk_minus7 = pd_walk - 7)
 ```
 
+What if we don't start with a df?
+
+```{r}
+litters_df |>
+  filter(group %in% c("con7", "con8")) |>
+  lm(gd18_weight ~ gd0_weight, data = _)
+```
+
+`select` vs. `pull`
+
+```{r}
+litters_df |>
+  select(group)
+
+litters_df |>
+  pull(group)
+```
+
