@@ -107,3 +107,11 @@ In the pups dataset, create a variable that subtracts 7 from PD walk.
 mutate(pups_df, pd_walk_minus7 = pd_walk - 7)
 ```
 
+## `arrange` data
+
+```{r}
+arrange(litters_df, pups_born_alive)
+
+arrange(litters_df, desc(pups_born_alive))
+```
+
