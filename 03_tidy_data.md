@@ -87,7 +87,7 @@ analysis_df =
   tibble(
     group = c("treatment", "treatment", "placebo", "placebo"),
     time = c("pre", "post", "pre", "post"),
-    mean_outcome = c(4.0, 8.0, 3.5, 4.0)
+    mean_outcome = c(4, 8, 3, 4)
   )
 ```
 
@@ -104,5 +104,97 @@ analysis_df |>
 
 | group     | pre | post |
 |:----------|----:|-----:|
-| treatment | 4.0 |    8 |
-| placebo   | 3.5 |    4 |
+| treatment |   4 |    8 |
+| placebo   |   3 |    4 |
+
+## Bind some rows
+
+First, import each LoTR movie table.
+
+``` r
+fellowship_df =
+  readxl::read_excel("data/LotR_Words.xlsx", range = "B3:D6") |>
+  mutate(movie = "fellowship of the ring")
+
+towers_df =
+  readxl::read_excel("data/LotR_Words.xlsx", range = "F3:H6") |>
+  mutate(movie = "two towers")
+
+return_df =
+  readxl::read_excel("data/LotR_Words.xlsx", range = "J3:L6") |>
+  mutate(movie = "return of the king")
+```
+
+Next, put all of these together and tidy.
+
+``` r
+lotr_df =
+  bind_rows(fellowship_df, towers_df, return_df) |>
+  janitor::clean_names() |>
+  relocate(movie) |>
+  pivot_longer(
+    female:male,
+    names_to = "gender",
+    values_to = "words"
+  )
+```
+
+## Join FAS datasets
+
+Import both files and join.
+
+``` r
+pups_df =
+  read_csv(
+    "data/FAS_pups.csv",
+    skip = 3,
+    na = c("", "NA", ".")
+    ) |>
+  janitor::clean_names() |>
+  mutate(
+    sex = case_match(
+      sex,
+      1 ~ "male",
+      2 ~ "female"
+    )
+  )
+```
+
+    ## Rows: 313 Columns: 6
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): Litter Number
+    ## dbl (5): Sex, PD ears, PD eyes, PD pivot, PD walk
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c("", "NA", ".")
+    ) |>
+  janitor::clean_names() |>
+  relocate(litter_number) |>
+  separate(group, into = c("dose", "day_of_tx"), 3) |>
+  mutate(
+    dose = str_to_lower(dose),
+    day_of_tx = as.numeric(day_of_tx),
+    gd_weight_gain = gd18_weight - gd0_weight
+  )
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number")
+```
